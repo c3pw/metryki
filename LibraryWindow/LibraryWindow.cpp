@@ -2,6 +2,7 @@
 #include "ui_LibraryWindow.h"
 
 #include "AddEditTypeForm.h"
+#include "AddEditAttribForm.h"
 
 #include <QModelIndexList>
 #include <QMessageBox>
@@ -16,6 +17,8 @@ LibraryWindow::LibraryWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+
+
     this->typeModel = new QSqlTableModel();
     this->typeModel->setTable("slownik_typow");
     this->typeSortProxy = new QSortFilterProxyModel();
@@ -25,6 +28,18 @@ LibraryWindow::LibraryWindow(QWidget *parent) :
     this->typeModel->select();
     this->ui->typeTable->resizeColumnsToContents();
     this->ui->typeTable->horizontalHeader()->setStretchLastSection(true);
+
+
+    this->attrModel = new QSqlTableModel();
+    this->attrModel->setTable("slownik_atrybutow");
+    this->attrModel->setHeaderData(0,Qt::Horizontal,tr("nazwa"));
+    this->attrSortProxy = new QSortFilterProxyModel();
+    this->attrSortProxy->setSourceModel(this->attrModel);
+    this->attrSortProxy->sort(0);
+    this->ui->attrTable->setModel(this->attrSortProxy);
+    this->attrModel->select();
+    this->ui->attrTable->resizeColumnsToContents();
+    this->ui->attrTable->horizontalHeader()->setStretchLastSection(true);
 
 
 }
@@ -54,6 +69,8 @@ void LibraryWindow::on_editType_clicked()
 void LibraryWindow::refreshTypeView()
 {
     this->typeModel->select();
+    this->ui->typeTable->resizeColumnsToContents();
+    this->ui->typeTable->horizontalHeader()->setStretchLastSection(true);
 }
 
 void LibraryWindow::on_deleteType_clicked()
@@ -80,7 +97,12 @@ void LibraryWindow::on_deleteType_clicked()
 
 
 
-
+void LibraryWindow::refreshAttribView()
+{
+    this->attrModel->select();
+    this->ui->attrTable->resizeColumnsToContents();
+    this->ui->attrTable->horizontalHeader()->setStretchLastSection(true);
+}
 
 
 
@@ -88,4 +110,42 @@ void LibraryWindow::on_deleteType_clicked()
 void LibraryWindow::on_typeTable_doubleClicked(const QModelIndex &index)
 {
     this->on_editType_clicked();
+}
+
+void LibraryWindow::on_addAttr_clicked()
+{
+    AddEditAttribForm *w = new AddEditAttribForm();
+    this->connect(w,SIGNAL(refreshView()),this,SLOT(refreshAttribView()));
+    w->addRecord();
+}
+
+void LibraryWindow::on_editAttr_clicked()
+{
+    AddEditAttribForm *w = new AddEditAttribForm();
+    this->connect(w,SIGNAL(refreshView()),this,SLOT(refreshAttribView()));
+    w->editRecord(this->attrSortProxy->mapToSource(this->ui->attrTable->selectionModel()->selectedRows().at(0)).data().toString());
+}
+
+void LibraryWindow::on_deleteAttr_clicked()
+{
+    int result = QMessageBox::question(this,tr("Usunięcie"),tr("Czy usunąć zaznaczony rekord?"),QMessageBox::Ok,QMessageBox::Cancel);
+    if(result == QMessageBox::Ok)
+    {
+        QSqlQuery q;
+        q.prepare("delete from slownik_atrybutow where nazwa_atrybutu=:name");
+        q.bindValue(":name",this->attrSortProxy->mapToSource(this->ui->attrTable->selectionModel()->selectedRows().at(0)).data().toString() );
+        if(!q.exec())
+        {
+            QMessageBox::critical(this,"Błąd",q.lastError().text());
+        }
+        else
+        {
+            this->refreshAttribView();
+        }
+    }
+}
+
+void LibraryWindow::on_attrTable_doubleClicked(const QModelIndex &index)
+{
+    this->on_editAttr_clicked();
 }

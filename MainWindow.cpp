@@ -30,22 +30,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->ui->headerGraphic->setPixmap(QPixmap(s.value("header/path").toString()));
 
-    QString imageFile = s.value("map/graphPath").toString();
-
-
-
-
-
-    QPixmap p(imageFile);
-    this->scene = new QGraphicsScene(0,0,p.width(),p.height());
-    scene->addPixmap(p);
-
-
-    this->ui->networkView->setScene(this->scene);
-    //this->ui->networkView->fitInView(this->scene->itemsBoundingRect(), Qt::KeepAspectRatio);
-
-
-
 
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(s.value("database/path").toString());

@@ -17,19 +17,21 @@ SOURCES += main.cpp\
     ConfigWindow/ConfigWindow.cpp \
     AboutWindow/AboutWindow.cpp \
     LibraryWindow/LibraryWindow.cpp \
-    LibraryWindow/AddEditTypeForm.cpp
+    LibraryWindow/AddEditTypeForm.cpp \
+    LibraryWindow/AddEditAttribForm.cpp
 
 HEADERS  += MainWindow.h \
     ConfigWindow/ConfigWindow.h \
     AboutWindow/AboutWindow.h \
     LibraryWindow/LibraryWindow.h \
-    LibraryWindow/AddEditTypeForm.h
+    LibraryWindow/AddEditTypeForm.h \
+    LibraryWindow/AddEditAttribForm.h
 
 FORMS    += MainWindow.ui \
     ConfigWindow/ConfigWindow.ui \
     AboutWindow/AboutWindow.ui \
     LibraryWindow/LibraryWindow.ui \
-    LibraryWindow/AddEditTypeForm.ui
+    LibraryWindow/AddEditTypeForm.ui \
+    LibraryWindow/AddEditAttribForm.ui
 
-RESOURCES += \
-    zasoby.qrc
+RESOURCES +=
