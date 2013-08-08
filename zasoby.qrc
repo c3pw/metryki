@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/wallpapers">
+        <file>1920x1200.jpg</file>
+    </qresource>
+</RCC>
