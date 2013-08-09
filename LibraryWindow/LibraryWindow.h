@@ -26,6 +26,8 @@ private slots:
 
     void refreshAttribView();
 
+    void refreshComponentView();
+
     void on_deleteType_clicked();
 
     void on_typeTable_doubleClicked(const QModelIndex &index);
@@ -38,6 +40,12 @@ private slots:
 
     void on_attrTable_doubleClicked(const QModelIndex &index);
 
+    void on_addComponent_clicked();
+
+    void on_editComponent_clicked();
+
+    void on_deleteComponent_clicked();
+
 private:
     Ui::LibraryWindow *ui;
 
@@ -46,6 +54,9 @@ private:
 
     QSqlTableModel  *attrModel;
     QSortFilterProxyModel *attrSortProxy;
+
+    QSqlTableModel  *componentModel;
+    QSortFilterProxyModel *componentSortProxy;
 };
 
 #endif // LIBRARYWINDOW_H

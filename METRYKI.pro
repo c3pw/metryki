@@ -18,20 +18,23 @@ SOURCES += main.cpp\
     AboutWindow/AboutWindow.cpp \
     LibraryWindow/LibraryWindow.cpp \
     LibraryWindow/AddEditTypeForm.cpp \
-    LibraryWindow/AddEditAttribForm.cpp
+    LibraryWindow/AddEditAttribForm.cpp \
+    LibraryWindow/AddEditComponentForm.cpp
 
 HEADERS  += MainWindow.h \
     ConfigWindow/ConfigWindow.h \
     AboutWindow/AboutWindow.h \
     LibraryWindow/LibraryWindow.h \
     LibraryWindow/AddEditTypeForm.h \
-    LibraryWindow/AddEditAttribForm.h
+    LibraryWindow/AddEditAttribForm.h \
+    LibraryWindow/AddEditComponentForm.h
 
 FORMS    += MainWindow.ui \
     ConfigWindow/ConfigWindow.ui \
     AboutWindow/AboutWindow.ui \
     LibraryWindow/LibraryWindow.ui \
     LibraryWindow/AddEditTypeForm.ui \
-    LibraryWindow/AddEditAttribForm.ui
+    LibraryWindow/AddEditAttribForm.ui \
+    LibraryWindow/AddEditComponentForm.ui
 
 RESOURCES +=

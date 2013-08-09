@@ -3,6 +3,7 @@
 
 #include "AddEditTypeForm.h"
 #include "AddEditAttribForm.h"
+#include "AddEditComponentForm.h"
 
 #include <QModelIndexList>
 #include <QMessageBox>
@@ -40,6 +41,17 @@ LibraryWindow::LibraryWindow(QWidget *parent) :
     this->attrModel->select();
     this->ui->attrTable->resizeColumnsToContents();
     this->ui->attrTable->horizontalHeader()->setStretchLastSection(true);
+
+
+    this->componentModel = new QSqlTableModel();
+    this->componentModel->setTable("slownik_podzespolow");
+    this->componentSortProxy = new QSortFilterProxyModel();
+    this->componentSortProxy->setSourceModel(this->componentModel);
+    this->componentSortProxy->sort(0);
+    this->ui->componentTable->setModel(this->componentSortProxy);
+    this->componentModel->select();
+    this->ui->componentTable->resizeColumnsToContents();
+    this->ui->componentTable->horizontalHeader()->setStretchLastSection(true);
 
 
 }
@@ -148,4 +160,45 @@ void LibraryWindow::on_deleteAttr_clicked()
 void LibraryWindow::on_attrTable_doubleClicked(const QModelIndex &index)
 {
     this->on_editAttr_clicked();
+}
+
+void LibraryWindow::refreshComponentView()
+{
+    this->componentModel->select();
+    this->ui->componentTable->resizeColumnsToContents();
+    this->ui->componentTable->horizontalHeader()->setStretchLastSection(true);
+}
+
+
+void LibraryWindow::on_addComponent_clicked()
+{
+    AddEditComponentForm *w = new AddEditComponentForm();
+    this->connect(w,SIGNAL(refreshView()),this,SLOT(refreshComponentView()));
+    w->addRecord();
+}
+
+void LibraryWindow::on_editComponent_clicked()
+{
+    AddEditComponentForm *w = new AddEditComponentForm();
+    this->connect(w,SIGNAL(refreshView()),this,SLOT(refreshComponentView()));
+    w->editRecord(this->componentSortProxy->mapToSource(this->ui->componentTable->selectionModel()->selectedRows().at(0)).data().toString());
+}
+
+void LibraryWindow::on_deleteComponent_clicked()
+{
+    int result = QMessageBox::question(this,tr("Usunięcie"),tr("Czy usunąć zaznaczony rekord?"),QMessageBox::Ok,QMessageBox::Cancel);
+    if(result == QMessageBox::Ok)
+    {
+        QSqlQuery q;
+        q.prepare("delete from slownik_podzespolow where nazwa=:name");
+        q.bindValue(":name",this->componentSortProxy->mapToSource(this->ui->componentTable->selectionModel()->selectedRows().at(0)).data().toString() );
+        if(!q.exec())
+        {
+            QMessageBox::critical(this,"Błąd",q.lastError().text());
+        }
+        else
+        {
+            this->refreshComponentView();
+        }
+    }
 }
