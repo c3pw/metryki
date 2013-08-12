@@ -73,9 +73,12 @@ void LibraryWindow::on_addType_clicked()
 
 void LibraryWindow::on_editType_clicked()
 {
-    AddEditTypeForm *w = new AddEditTypeForm();
-    this->connect(w,SIGNAL(refreshView()),this,SLOT(refreshTypeView()));
-    w->editRecord(this->typeSortProxy->mapToSource(this->ui->typeTable->selectionModel()->selectedRows().at(0)).data().toString());
+    if(!this->ui->typeTable->selectionModel()->selectedRows().isEmpty())
+    {
+        AddEditTypeForm *w = new AddEditTypeForm();
+        this->connect(w,SIGNAL(refreshView()),this,SLOT(refreshTypeView()));
+        w->editRecord(this->typeSortProxy->mapToSource(this->ui->typeTable->selectionModel()->selectedRows().at(0)).data().toString());
+    }
 
 }
 void LibraryWindow::refreshTypeView()
@@ -87,19 +90,22 @@ void LibraryWindow::refreshTypeView()
 
 void LibraryWindow::on_deleteType_clicked()
 {
-    int result = QMessageBox::question(this,tr("Usunięcie"),tr("Czy usunąć zaznaczony rekord?"),QMessageBox::Ok,QMessageBox::Cancel);
-    if(result == QMessageBox::Ok)
+    if(!this->ui->typeTable->selectionModel()->selectedRows().isEmpty())
     {
-        QSqlQuery q;
-        q.prepare("delete from slownik_typow where nazwa=:name");
-        q.bindValue(":name",this->typeSortProxy->mapToSource(this->ui->typeTable->selectionModel()->selectedRows().at(0)).data().toString() );
-        if(!q.exec())
+        int result = QMessageBox::question(this,tr("Usunięcie"),tr("Czy usunąć zaznaczony rekord?"),QMessageBox::Ok,QMessageBox::Cancel);
+        if(result == QMessageBox::Ok)
         {
-            QMessageBox::critical(this,"Błąd",q.lastError().text());
-        }
-        else
-        {
-            this->refreshTypeView();
+            QSqlQuery q;
+            q.prepare("delete from slownik_typow where nazwa=:name");
+            q.bindValue(":name",this->typeSortProxy->mapToSource(this->ui->typeTable->selectionModel()->selectedRows().at(0)).data().toString() );
+            if(!q.exec())
+            {
+                QMessageBox::critical(this,"Błąd",q.lastError().text());
+            }
+            else
+            {
+                this->refreshTypeView();
+            }
         }
     }
 }
@@ -133,26 +139,32 @@ void LibraryWindow::on_addAttr_clicked()
 
 void LibraryWindow::on_editAttr_clicked()
 {
-    AddEditAttribForm *w = new AddEditAttribForm();
-    this->connect(w,SIGNAL(refreshView()),this,SLOT(refreshAttribView()));
-    w->editRecord(this->attrSortProxy->mapToSource(this->ui->attrTable->selectionModel()->selectedRows().at(0)).data().toString());
+    if(!this->ui->attrTable->selectionModel()->selectedRows().isEmpty())
+    {
+        AddEditAttribForm *w = new AddEditAttribForm();
+        this->connect(w,SIGNAL(refreshView()),this,SLOT(refreshAttribView()));
+        w->editRecord(this->attrSortProxy->mapToSource(this->ui->attrTable->selectionModel()->selectedRows().at(0)).data().toString());
+    }
 }
 
 void LibraryWindow::on_deleteAttr_clicked()
 {
-    int result = QMessageBox::question(this,tr("Usunięcie"),tr("Czy usunąć zaznaczony rekord?"),QMessageBox::Ok,QMessageBox::Cancel);
-    if(result == QMessageBox::Ok)
+    if(!this->ui->attrTable->selectionModel()->selectedRows().isEmpty())
     {
-        QSqlQuery q;
-        q.prepare("delete from slownik_atrybutow where nazwa_atrybutu=:name");
-        q.bindValue(":name",this->attrSortProxy->mapToSource(this->ui->attrTable->selectionModel()->selectedRows().at(0)).data().toString() );
-        if(!q.exec())
+        int result = QMessageBox::question(this,tr("Usunięcie"),tr("Czy usunąć zaznaczony rekord?"),QMessageBox::Ok,QMessageBox::Cancel);
+        if(result == QMessageBox::Ok)
         {
-            QMessageBox::critical(this,"Błąd",q.lastError().text());
-        }
-        else
-        {
-            this->refreshAttribView();
+            QSqlQuery q;
+            q.prepare("delete from slownik_atrybutow where nazwa_atrybutu=:name");
+            q.bindValue(":name",this->attrSortProxy->mapToSource(this->ui->attrTable->selectionModel()->selectedRows().at(0)).data().toString() );
+            if(!q.exec())
+            {
+                QMessageBox::critical(this,"Błąd",q.lastError().text());
+            }
+            else
+            {
+                this->refreshAttribView();
+            }
         }
     }
 }
@@ -179,26 +191,32 @@ void LibraryWindow::on_addComponent_clicked()
 
 void LibraryWindow::on_editComponent_clicked()
 {
-    AddEditComponentForm *w = new AddEditComponentForm();
-    this->connect(w,SIGNAL(refreshView()),this,SLOT(refreshComponentView()));
-    w->editRecord(this->componentSortProxy->mapToSource(this->ui->componentTable->selectionModel()->selectedRows().at(0)).data().toString());
+    if(!this->ui->componentTable->selectionModel()->selectedRows().isEmpty())
+    {
+        AddEditComponentForm *w = new AddEditComponentForm();
+        this->connect(w,SIGNAL(refreshView()),this,SLOT(refreshComponentView()));
+        w->editRecord(this->componentSortProxy->mapToSource(this->ui->componentTable->selectionModel()->selectedRows().at(0)).data().toString());
+    }
 }
 
 void LibraryWindow::on_deleteComponent_clicked()
 {
-    int result = QMessageBox::question(this,tr("Usunięcie"),tr("Czy usunąć zaznaczony rekord?"),QMessageBox::Ok,QMessageBox::Cancel);
-    if(result == QMessageBox::Ok)
+    if(!this->ui->componentTable->selectionModel()->selectedRows().isEmpty())
     {
-        QSqlQuery q;
-        q.prepare("delete from slownik_podzespolow where nazwa=:name");
-        q.bindValue(":name",this->componentSortProxy->mapToSource(this->ui->componentTable->selectionModel()->selectedRows().at(0)).data().toString() );
-        if(!q.exec())
+        int result = QMessageBox::question(this,tr("Usunięcie"),tr("Czy usunąć zaznaczony rekord?"),QMessageBox::Ok,QMessageBox::Cancel);
+        if(result == QMessageBox::Ok)
         {
-            QMessageBox::critical(this,"Błąd",q.lastError().text());
-        }
-        else
-        {
-            this->refreshComponentView();
+            QSqlQuery q;
+            q.prepare("delete from slownik_podzespolow where nazwa=:name");
+            q.bindValue(":name",this->componentSortProxy->mapToSource(this->ui->componentTable->selectionModel()->selectedRows().at(0)).data().toString() );
+            if(!q.exec())
+            {
+                QMessageBox::critical(this,"Błąd",q.lastError().text());
+            }
+            else
+            {
+                this->refreshComponentView();
+            }
         }
     }
 }
