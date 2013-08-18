@@ -2,7 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QWidget>
-#include <QGraphicsScene>
+#include <QSqlQueryModel>
+#include <QSortFilterProxyModel>
+
 
 namespace Ui {
 class MainWindow;
@@ -25,10 +27,20 @@ private slots:
 
     void on_commandLinkButton_clicked();
 
+    void on_addDeviceButton_clicked();
+
+    void refreshDeviceView();
+
+    void on_editDeviceButton_clicked();
+
+    void on_deleteDeviceButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     void closeEvent(QCloseEvent *event);
-    QGraphicsScene *scene;
+
+    QSqlQueryModel *deviceModel;
+    QSortFilterProxyModel *deviceSortProxy;
 };
 
 #endif // MAINWINDOW_H

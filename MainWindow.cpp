@@ -4,6 +4,7 @@
 #include "ConfigWindow/ConfigWindow.h"
 #include "AboutWindow/AboutWindow.h"
 #include "LibraryWindow/LibraryWindow.h"
+#include "AddEditDeviceForm.h"
 
 #include <QSettings>
 #include <QMessageBox>
@@ -51,6 +52,31 @@ MainWindow::MainWindow(QWidget *parent) :
     {
         this->ui->statusLabel->setText(db.lastError().text());
     }
+
+
+
+    this->deviceModel = new QSqlQueryModel();
+    this->deviceModel->setQuery("select "
+                                "slownik_stanowisk.lokalizacja_stanowiska, "
+                                "slownik_stanowisk.identyfikator_stanowiska, "
+                                "urzadzenia.identyfikator_urzadzenia, "
+                                "urzadzenia.typ_urzadzenia, "
+                                "urzadzenia.opis "
+                           "from "
+                                "urzadzenia "
+                           "left join slownik_stanowisk using(identyfikator_stanowiska);");
+    this->deviceSortProxy = new QSortFilterProxyModel();
+    this->deviceSortProxy->setSourceModel(this->deviceModel);
+    this->ui->deviceTable->sortByColumn(0);
+    this->deviceSortProxy->sort(0);
+    this->ui->deviceTable->setModel(this->deviceSortProxy);
+    this->ui->deviceTable->resizeColumnsToContents();
+    this->ui->deviceTable->horizontalHeader()->setStretchLastSection(true);
+    this->deviceModel->setHeaderData(0,Qt::Horizontal,tr("Lokalizacja"));
+    this->deviceModel->setHeaderData(1,Qt::Horizontal,tr("Stanowisko"));
+    this->deviceModel->setHeaderData(2,Qt::Horizontal,tr("Urządzenie"));
+    this->deviceModel->setHeaderData(3,Qt::Horizontal,tr("Typ urządzenia"));
+    this->deviceModel->setHeaderData(4,Qt::Horizontal,tr("Opis"));
 }
 
 MainWindow::~MainWindow()
@@ -95,4 +121,64 @@ void MainWindow::on_commandLinkButton_clicked()
 {
     LibraryWindow *w = new LibraryWindow();
     w->show();
+}
+
+void MainWindow::on_addDeviceButton_clicked()
+{
+    AddEditDeviceForm *w = new AddEditDeviceForm();
+    this->connect(w,SIGNAL(refreshView()),this,SLOT(refreshDeviceView()));
+    w->addRecord();
+}
+
+void MainWindow::refreshDeviceView()
+{
+    this->deviceModel->setQuery("select "
+                                "slownik_stanowisk.lokalizacja_stanowiska, "
+                                "slownik_stanowisk.identyfikator_stanowiska, "
+                                "urzadzenia.identyfikator_urzadzenia, "
+                                "urzadzenia.typ_urzadzenia, "
+                                "urzadzenia.opis "
+                           "from "
+                                "urzadzenia "
+                           "left join slownik_stanowisk using(identyfikator_stanowiska);");
+    this->ui->deviceTable->sortByColumn(0);
+    this->deviceSortProxy->sort(0);
+}
+
+void MainWindow::on_editDeviceButton_clicked()
+{
+    if(!this->ui->deviceTable->selectionModel()->selectedRows().isEmpty())
+    {
+        AddEditDeviceForm *w = new AddEditDeviceForm();
+        this->connect(w,SIGNAL(refreshView()),this,SLOT(refreshDeviceView()));
+        w->editRecord(this->ui->deviceTable->selectionModel()->selectedIndexes().at(2).data().toString());
+    }
+
+}
+
+void MainWindow::on_deleteDeviceButton_clicked()
+{
+    if(!this->ui->deviceTable->selectionModel()->selectedRows().isEmpty())
+    {
+        int result = QMessageBox::question(this,tr("Usunięcie"),tr("Czy usunąć zaznaczony rekord?"),QMessageBox::Ok,QMessageBox::Cancel);
+        if(result == QMessageBox::Ok)
+        {
+            QSqlQuery q;
+            q.prepare("delete from urzadzenia where identyfikator_urzadzenia=:name");
+            q.bindValue(":name",this->ui->deviceTable->selectionModel()->selectedIndexes().at(2).data().toString());
+            if(!q.exec())
+            {
+
+                switch(q.lastError().number())
+                {
+                    case 19: QMessageBox::critical(this,"Błąd",tr("Nie jest możliwe usunięcie rekordu. Pozostały rekordy, które są z nim powiązane."));break;
+                    default: QMessageBox::critical(this,"Błąd",q.lastError().text());
+                }
+            }
+            else
+            {
+                this->refreshDeviceView();
+            }
+        }
+    }
 }
