@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QSqlDatabase>
+#include <QSqlQuery>
 #include <QSqlError>
 #include <QPicture>
 
@@ -35,7 +36,16 @@ MainWindow::MainWindow(QWidget *parent) :
     db.setDatabaseName(s.value("database/path").toString());
     if(db.open())
     {
-        this->ui->statusLabel->setText(tr("Gotowy"));
+        QSqlQuery q;
+        q.prepare("PRAGMA foreign_keys = ON;");
+        if(q.exec())
+        {
+            this->ui->statusLabel->setText(tr("Gotowy"));
+        }
+        else
+        {
+            QMessageBox::critical(this,tr("Błąd"),tr("Silnik bazy danych nie wspiera operacji na kluczach obcych. Należy uważać."));
+        }
     }
     else
     {

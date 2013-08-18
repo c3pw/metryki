@@ -28,6 +28,8 @@ private slots:
 
     void refreshComponentView();
 
+    void refreshLocalityView();
+
     void on_deleteType_clicked();
 
     void on_typeTable_doubleClicked(const QModelIndex &index);
@@ -46,6 +48,14 @@ private slots:
 
     void on_deleteComponent_clicked();
 
+    void on_addLocality_clicked();
+
+    void on_editLocality_clicked();
+
+    void on_localityTable_doubleClicked(const QModelIndex &index);
+
+    void on_deleteLocality_clicked();
+
 private:
     Ui::LibraryWindow *ui;
 
@@ -57,6 +67,9 @@ private:
 
     QSqlTableModel  *componentModel;
     QSortFilterProxyModel *componentSortProxy;
+
+    QSqlTableModel  *localityModel;
+    QSortFilterProxyModel *localitySortProxy;
 };
 
 #endif // LIBRARYWINDOW_H

@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     LibraryWindow/LibraryWindow.cpp \
     LibraryWindow/AddEditTypeForm.cpp \
     LibraryWindow/AddEditAttribForm.cpp \
-    LibraryWindow/AddEditComponentForm.cpp
+    LibraryWindow/AddEditComponentForm.cpp \
+    LibraryWindow/AddEditLocalityForm.cpp
 
 HEADERS  += MainWindow.h \
     ConfigWindow/ConfigWindow.h \
@@ -27,7 +28,8 @@ HEADERS  += MainWindow.h \
     LibraryWindow/LibraryWindow.h \
     LibraryWindow/AddEditTypeForm.h \
     LibraryWindow/AddEditAttribForm.h \
-    LibraryWindow/AddEditComponentForm.h
+    LibraryWindow/AddEditComponentForm.h \
+    LibraryWindow/AddEditLocalityForm.h
 
 FORMS    += MainWindow.ui \
     ConfigWindow/ConfigWindow.ui \
@@ -35,6 +37,7 @@ FORMS    += MainWindow.ui \
     LibraryWindow/LibraryWindow.ui \
     LibraryWindow/AddEditTypeForm.ui \
     LibraryWindow/AddEditAttribForm.ui \
-    LibraryWindow/AddEditComponentForm.ui
+    LibraryWindow/AddEditComponentForm.ui \
+    LibraryWindow/AddEditLocalityForm.ui
 
 RESOURCES +=

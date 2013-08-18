@@ -4,6 +4,8 @@
 #include "AddEditTypeForm.h"
 #include "AddEditAttribForm.h"
 #include "AddEditComponentForm.h"
+#include "AddEditLocalityForm.h"
+#include "AddEditLocalityForm.h"
 
 #include <QModelIndexList>
 #include <QMessageBox>
@@ -53,7 +55,15 @@ LibraryWindow::LibraryWindow(QWidget *parent) :
     this->ui->componentTable->resizeColumnsToContents();
     this->ui->componentTable->horizontalHeader()->setStretchLastSection(true);
 
-
+    this->localityModel = new QSqlTableModel();
+    this->localityModel->setTable("slownik_stanowisk");
+    this->localitySortProxy = new QSortFilterProxyModel();
+    this->localitySortProxy->setSourceModel(this->localityModel);
+    this->localitySortProxy->sort(0);
+    this->ui->localityTable->setModel(this->localitySortProxy);
+    this->localityModel->select();
+    this->ui->localityTable->resizeColumnsToContents();
+    this->ui->localityTable->horizontalHeader()->setStretchLastSection(true);
 }
 
 LibraryWindow::~LibraryWindow()
@@ -100,7 +110,12 @@ void LibraryWindow::on_deleteType_clicked()
             q.bindValue(":name",this->typeSortProxy->mapToSource(this->ui->typeTable->selectionModel()->selectedRows().at(0)).data().toString() );
             if(!q.exec())
             {
-                QMessageBox::critical(this,"Błąd",q.lastError().text());
+
+                switch(q.lastError().number())
+                {
+                    case 19: QMessageBox::critical(this,"Błąd",tr("Nie jest możliwe usunięcie rekordu. Pozostały rekordy, które są z nim powiązane."));break;
+                    default: QMessageBox::critical(this,"Błąd",q.lastError().text());
+                }
             }
             else
             {
@@ -159,7 +174,11 @@ void LibraryWindow::on_deleteAttr_clicked()
             q.bindValue(":name",this->attrSortProxy->mapToSource(this->ui->attrTable->selectionModel()->selectedRows().at(0)).data().toString() );
             if(!q.exec())
             {
-                QMessageBox::critical(this,"Błąd",q.lastError().text());
+                switch(q.lastError().number())
+                {
+                    case 19: QMessageBox::critical(this,"Błąd",tr("Nie jest możliwe usunięcie rekordu. Pozostały rekordy, które są z nim powiązane."));break;
+                    default: QMessageBox::critical(this,"Błąd",q.lastError().text());
+                }
             }
             else
             {
@@ -211,11 +230,70 @@ void LibraryWindow::on_deleteComponent_clicked()
             q.bindValue(":name",this->componentSortProxy->mapToSource(this->ui->componentTable->selectionModel()->selectedRows().at(0)).data().toString() );
             if(!q.exec())
             {
-                QMessageBox::critical(this,"Błąd",q.lastError().text());
+                switch(q.lastError().number())
+                {
+                    case 19: QMessageBox::critical(this,"Błąd",tr("Nie jest możliwe usunięcie rekordu. Pozostały rekordy, które są z nim powiązane."));break;
+                    default: QMessageBox::critical(this,"Błąd",q.lastError().text());
+                }
             }
             else
             {
                 this->refreshComponentView();
+            }
+        }
+    }
+}
+
+void LibraryWindow::on_addLocality_clicked()
+{
+    AddEditLocalityForm *w = new AddEditLocalityForm();
+    this->connect(w,SIGNAL(refreshView()),this,SLOT(refreshLocalityView()));
+    w->addRecord();
+}
+
+void LibraryWindow::refreshLocalityView()
+{
+    this->localityModel->select();
+    this->ui->localityTable->resizeColumnsToContents();
+    this->ui->localityTable->horizontalHeader()->setStretchLastSection(true);
+}
+
+void LibraryWindow::on_editLocality_clicked()
+{
+    if(!this->ui->localityTable->selectionModel()->selectedRows().isEmpty())
+    {
+        AddEditLocalityForm *w = new AddEditLocalityForm();
+        this->connect(w,SIGNAL(refreshView()),this,SLOT(refreshLocalityView()));
+        w->editRecord(this->localitySortProxy->mapToSource(this->ui->localityTable->selectionModel()->selectedRows().at(0)).data().toString());
+    }
+}
+
+void LibraryWindow::on_localityTable_doubleClicked(const QModelIndex &index)
+{
+    this->on_editLocality_clicked();
+}
+
+void LibraryWindow::on_deleteLocality_clicked()
+{
+    if(!this->ui->localityTable->selectionModel()->selectedRows().isEmpty())
+    {
+        int result = QMessageBox::question(this,tr("Usunięcie"),tr("Czy usunąć zaznaczony rekord?"),QMessageBox::Ok,QMessageBox::Cancel);
+        if(result == QMessageBox::Ok)
+        {
+            QSqlQuery q;
+            q.prepare("delete from slownik_stanowisk where identyfikator_stanowiska=:name");
+            q.bindValue(":name",this->localitySortProxy->mapToSource(this->ui->localityTable->selectionModel()->selectedRows().at(0)).data().toString() );
+            if(!q.exec())
+            {
+                switch(q.lastError().number())
+                {
+                    case 19: QMessageBox::critical(this,"Błąd",tr("Nie jest możliwe usunięcie rekordu. Pozostały rekordy, które są z nim powiązane."));break;
+                    default: QMessageBox::critical(this,"Błąd",q.lastError().text());
+                }
+            }
+            else
+            {
+                this->refreshLocalityView();
             }
         }
     }
