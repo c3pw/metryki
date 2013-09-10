@@ -35,6 +35,8 @@ private slots:
 
     void on_deleteDeviceButton_clicked();
 
+    void on_deviceCardButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     void closeEvent(QCloseEvent *event);

@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     LibraryWindow/AddEditAttribForm.cpp \
     LibraryWindow/AddEditComponentForm.cpp \
     LibraryWindow/AddEditLocalityForm.cpp \
-    AddEditDeviceForm.cpp
+    AddEditDeviceForm.cpp \
+    DeviceWindow/DeviceWindow.cpp
 
 HEADERS  += MainWindow.h \
     ConfigWindow/ConfigWindow.h \
@@ -31,7 +32,8 @@ HEADERS  += MainWindow.h \
     LibraryWindow/AddEditAttribForm.h \
     LibraryWindow/AddEditComponentForm.h \
     LibraryWindow/AddEditLocalityForm.h \
-    AddEditDeviceForm.h
+    AddEditDeviceForm.h \
+    DeviceWindow/DeviceWindow.h
 
 FORMS    += MainWindow.ui \
     ConfigWindow/ConfigWindow.ui \
@@ -41,6 +43,8 @@ FORMS    += MainWindow.ui \
     LibraryWindow/AddEditAttribForm.ui \
     LibraryWindow/AddEditComponentForm.ui \
     LibraryWindow/AddEditLocalityForm.ui \
-    AddEditDeviceForm.ui
+    AddEditDeviceForm.ui \
+    DeviceWindow/DeviceWindow.ui
 
-RESOURCES +=
+RESOURCES += \
+    resources.qrc

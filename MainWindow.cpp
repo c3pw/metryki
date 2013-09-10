@@ -5,6 +5,7 @@
 #include "AboutWindow/AboutWindow.h"
 #include "LibraryWindow/LibraryWindow.h"
 #include "AddEditDeviceForm.h"
+#include "DeviceWindow/DeviceWindow.h"
 
 #include <QSettings>
 #include <QMessageBox>
@@ -180,5 +181,14 @@ void MainWindow::on_deleteDeviceButton_clicked()
                 this->refreshDeviceView();
             }
         }
+    }
+}
+
+void MainWindow::on_deviceCardButton_clicked()
+{
+    if(!this->ui->deviceTable->selectionModel()->selectedRows().isEmpty())
+    {
+        DeviceWindow *w = new DeviceWindow();
+        w->showDevice(this->ui->deviceTable->selectionModel()->selectedIndexes().at(2).data().toString());
     }
 }
